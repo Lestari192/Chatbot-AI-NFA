@@ -1,0 +1,160 @@
+{
+  "name": "AI Product Chatbot NFA",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is Aii. How can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d2845ac3-4ee6-4fc1-b63a-0e6f1535498b",
+      "name": "When chat message received",
+      "webhookId": "45d6d7c1-c03b-422c-8cf8-6424d621f415"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah Customer Service AI resmi untuk NF ACADEMY. Tugas utamamu adalah membantu pengguna memberikan informasi tentang jenis program pelatihan, nama kursus, deskripsi topik, dan harga/biaya pelatihan yang tersedia.\n\nAturan dalam menjawab:\n1. Gunakan Tool \"Google Sheets Tool\" untuk mengambil dan mencari data informasi pelatihan serta harganya dari spreadsheet.\n2. Jawab pertanyaan pengguna dengan ramah, sopan, dan informatif berdasarkan data yang ditemukan di Google Sheets.\n3. Tampilkan informasi biaya/harga dalam format mata uang Rupiah (contoh: Rp 15.000.000).\n4. Jika informasi yang ditanyakan tidak ditemukan dalam data, sampaikan dengan sopan bahwa pelatihan tersebut belum tersedia."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a558d732-b4c5-4614-86bc-ff2858512a25",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "cb3113d6-c64a-487c-8b83-0986643d0da4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Jw6u16TUoSbAW6oL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "761dd8ac-2909-4f54-808e-68865769ae8b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1Z0XLbyGEKOcdv9EPIAMXMO7FvRwEXLJ336UpFZdrIwI/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Data_ProdukNFA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z0XLbyGEKOcdv9EPIAMXMO7FvRwEXLJ336UpFZdrIwI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        208
+      ],
+      "id": "17fcd306-c286-4908-97fb-1a91175b0e3b",
+      "name": "get_product_data",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "FxSSaybQJQmdgPJT",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "notes": "Gunakan tool ini untuk mengambil daftar program pelatihan, nama kursus, deskripsi, dan harga/biaya dari Google Sheets."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_product_data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "aad804f9-8603-4a73-808f-f8d5a56263cb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "T1m7Q4ln4phbj0PV",
+  "tags": []
+}
